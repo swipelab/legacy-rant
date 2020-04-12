@@ -1,12 +1,12 @@
 # rant
 
-A Cool Matrix Client
+A cool messenger app for [Matrix](https://matrix.org/) servers. 
 
-#### generate ``ghost`` client
+## update generated code
+  
+Currently used for:
+- Matrix Api Client (Chopper)
 
-```shell script
-pub run build_runner build
-
-#flutter
+```sh
 flutter packages pub run build_runner build
 ```
