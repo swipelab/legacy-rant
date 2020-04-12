@@ -28,11 +28,11 @@ class MxRoomJoin {
       ? null
       : MxRoomJoin(
           timeline: MxTimeline.fromJson(json['timeline']),
-          state: Json.list(json.at('state.events'), MxEvent.fromJson),
+          state: Json.list(json.path('state.events'), MxEvent.fromJson),
           accountData:
-              Json.list(json.at('account_data.events'), MxEvent.fromJson),
-          ephemeral: Json.list(json.at('ephemeral.events'), MxEvent.fromJson),
-          presence: Json.list(json.at('presence.events'), MxEvent.fromJson),
+              Json.list(json.path('account_data.events'), MxEvent.fromJson),
+          ephemeral: Json.list(json.path('ephemeral.events'), MxEvent.fromJson),
+          presence: Json.list(json.path('presence.events'), MxEvent.fromJson),
           unreadNotifications:
               MxRoomUnreadNotification.fromJson(json['unread_notifications']),
           summary: MxRoomSummary.fromJson(json['summary']),

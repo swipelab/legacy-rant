@@ -12,7 +12,7 @@ class Json {
 }
 
 extension JsonExtension on Map<String, dynamic> {
-  dynamic at<T>(String path, {dynamic defaultValue}) {
+  dynamic path<T>(String path, {dynamic defaultValue}) {
     try {
       dynamic current = this;
       path.split('.').forEach((segment) {

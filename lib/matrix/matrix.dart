@@ -4,7 +4,6 @@ import 'package:chopper/chopper.dart';
 import 'package:rant/matrix/types/mx_get_room_messages.dart';
 import 'package:rant/matrix/types/mx_text.dart';
 import 'package:rant/models/models.dart';
-import 'package:rant/sx.dart';
 import 'package:rant/util/util.dart';
 import 'package:scoped/scoped.dart';
 

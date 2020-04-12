@@ -91,24 +91,23 @@ class MatrixRoom {
 
   bool _loading = false;
 
+  bool get canLoadMore => sinceCreation.value != true;
+
   Future<void> loadMore() async {
-    if (sinceCreation.value) return;
+    if (!canLoadMore) return;
 
     if (_loading) return;
     _loading = true;
-
     workers.value++;
+
     final slice = await matrix.client
         .getRoomMessages(roomId: roomId, dir: MxDir.b, from: start.value);
 
     slice.chunk.forEach((e) => handleEvent(e, dir: MxDir.b));
-
     start.value = slice.end;
-
     if (slice.end == slice.start) sinceCreation.value = true;
 
     _loading = false;
-
     workers.value--;
   }
 }
