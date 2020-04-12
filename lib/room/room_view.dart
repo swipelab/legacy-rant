@@ -1,14 +1,12 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rant/account.dart';
 import 'package:rant/matrix/matrix.dart';
 import 'package:rant/matrix/matrix_room.dart';
 import 'package:rant/matrix/types/mx_event.dart';
 import 'package:rant/room/message_presenter.dart';
 import 'package:rant/ux/message_composer.dart';
 import 'package:rant/ux/page.dart';
-import 'package:rant/ux/post_frame.dart';
 
 import 'package:scoped/scoped.dart';
 
@@ -67,7 +65,7 @@ class _RoomViewState extends State<RoomView> {
   void onScroll() async {
     if (widget.room.canLoadMore && _scroll.position.extentAfter < 50) {
       await widget.room.loadMore();
-      this.setState((){});
+      this.setState(() {});
       WidgetsBinding.instance.addPostFrameCallback((_) => onScroll());
     }
   }
@@ -82,7 +80,7 @@ class _RoomViewState extends State<RoomView> {
   }
 
   Widget buildTimeline(BuildContext context, MatrixRoom room) {
-    return room.timeline.bindValue((context, timeline) => ListView.builder(
+    return room.timeline.bindMix((context, timeline) => ListView.builder(
           controller: _scroll,
           padding: EdgeInsets.only(top: 96),
           itemBuilder: (context, index) =>
@@ -98,8 +96,12 @@ class _RoomViewState extends State<RoomView> {
         title:
             widget.room.displayName.bindValue((context, value) => Text(value)),
         actions: <Widget>[
-          widget.room.workers
-              .bindValue((_, v) => Center(child: Text(v > 0 ? 'loading...' : 'idle'))),
+          widget.room.workers.bindValue(
+              (_, v) => Center(child: Text(v > 0 ? 'loading...' : 'idle'))),
+          context
+              .get<Account>()
+              .workers
+              .bindValue((_, v) => Center(child: Text('(${v.toString()})'))),
         ],
       ),
       child: Column(

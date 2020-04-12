@@ -16,7 +16,7 @@ class MatrixRoom {
   final Ref<String> lastMessage = Ref('');
   final Ref<String> lastSeen = Ref('');
 
-  final Ref<List<MxEvent>> timeline = Ref([]);
+  final Mix<MxEvent> timeline = Mix([]);
 
   final Ref<String> start;
   final Ref<String> end;
@@ -59,12 +59,14 @@ class MatrixRoom {
     } else if (e.content is MxRoomMember) {
       members[e.stateKey] = e.content;
       _update();
+    } else if (e.type == 'm.room.message') {
+      timeline.insert(0, e);
     }
   }
 
-  handleTimelineEvent(MxEvent e) {
+  handleHistoricEvent(MxEvent e) {
     const Set<String> visible = {'m.room.message'};
-    if (visible.contains(e.type)) timeline.value.add(e);
+    if (visible.contains(e.type)) timeline.add(e);
   }
 
   _updateDisplayName() {
@@ -98,7 +100,7 @@ class MatrixRoom {
     final slice = await matrix.client
         .getRoomMessages(roomId: roomId, dir: MxDir.b, from: start.value);
 
-    slice.chunk.forEach(handleTimelineEvent);
+    slice.chunk.forEach(handleHistoricEvent);
 
     start.value = slice.end;
     if (slice.end == slice.start) sinceCreation.value = true;

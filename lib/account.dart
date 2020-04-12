@@ -18,7 +18,7 @@ class Account {
     onSync();
   }
 
-  final Ref<int> count = Ref(0);
+  final Ref<int> workers = Ref(0);
   final Ref<bool> isAuthenticated = Ref(false);
   final Ref<Profile> profile = Ref(Profile());
   final Ref<List<MatrixRoom>> rooms = Ref([]);
@@ -49,28 +49,30 @@ class Account {
 
   bool _syncing = false;
   String _nextBatch;
+
   void onSync() async {
     if (!isAuthenticated.value || _syncing) return;
     _syncing = true;
 
-    count.value++;
+    workers.value++;
 
     try {
-      final sync = await _matrix.sync(since: _nextBatch);
+      final sync = await _matrix.sync(since: _nextBatch, timeout: 30000);
 
       sync.rooms.join.forEach((key, value) {
         final room =
             join.putIfAbsent(key, () => MatrixRoom(roomId: key, store: store));
-        value.state.forEach((e) => room.handleEvent(e));
-        value.timeline.events.forEach((e) => room.handleEvent(e));
+        value.state.forEach(room.handleEvent);
+        value.timeline.events.forEach(room.handleEvent);
       });
 
       rooms.value = join.values.toList();
       _nextBatch = sync.nextBatch;
     } catch (e) {
       print(e);
+    } finally {
+      workers.value--;
+      _syncing = false;
     }
-
-    _syncing = false;
   }
 }

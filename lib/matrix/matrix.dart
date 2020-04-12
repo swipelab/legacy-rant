@@ -83,8 +83,8 @@ class Matrix {
     }
   }
 
-  Future<MxClientGetSyncResponse> sync({String since}) async {
-    final resp = await client.getSync(since: since);
+  Future<MxClientGetSyncResponse> sync({String since, int timeout = 30000, String filter = '0'}) async {
+    final resp = await client.getSync(since: since, timeout: timeout, filter: filter);
     return MxClientGetSyncResponse.fromJson(resp.body);
   }
 
