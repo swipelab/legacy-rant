@@ -1,6 +1,6 @@
 # rant
 
-A new Flutter project.
+A Cool Matrix Client
 
 #### generate ``ghost`` client
 
