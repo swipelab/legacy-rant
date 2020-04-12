@@ -80,7 +80,7 @@ class _RoomViewState extends State<RoomView> {
   }
 
   Widget buildTimeline(BuildContext context, MatrixRoom room) {
-    return room.timeline.bindMix((context, timeline) => ListView.builder(
+    return room.timeline.bind((context, timeline) => ListView.builder(
           controller: _scroll,
           padding: EdgeInsets.only(top: 96),
           itemBuilder: (context, index) =>
