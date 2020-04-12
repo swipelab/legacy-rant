@@ -11,7 +11,7 @@ class Account {
   Timer _timer;
 
   Account(this.store) {
-    _timer = Timer.periodic(Duration(seconds: 5), handleTimeout);
+    _timer = Timer.periodic(Duration(seconds: 1), handleTimeout);
   }
 
   void handleTimeout(Timer timer) {
@@ -60,7 +60,7 @@ class Account {
 
       sync.rooms.join.forEach((key, value) {
         final room =
-            join.putIfAbsent(key, () => MatrixRoom(roomId: key, store: store, start: value.timeline.prevBatch));
+            join.putIfAbsent(key, () => MatrixRoom(roomId: key, store: store));
         value.state.forEach((e) => room.handleEvent(e));
         value.timeline.events.forEach((e) => room.handleEvent(e));
       });

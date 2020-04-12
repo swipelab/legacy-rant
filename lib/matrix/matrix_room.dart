@@ -1,7 +1,4 @@
 import 'package:rant/matrix/types/mx_dir.dart';
-import 'package:rant/matrix/types/mx_image.dart';
-import 'package:rant/matrix/types/mx_text.dart';
-import 'package:rant/matrix/types/mx_video.dart';
 import 'package:scoped/scoped.dart';
 
 import 'matrix.dart';
@@ -49,7 +46,7 @@ class MatrixRoom {
     _updateAvatarUrl();
   }
 
-  handleEvent(MxEvent e, {MxDir dir = MxDir.f}) {
+  handleEvent(MxEvent e) {
     if (e.content is MxRoomName) {
       _name = e.content;
       _update();
@@ -62,19 +59,17 @@ class MatrixRoom {
     } else if (e.content is MxRoomMember) {
       members[e.stateKey] = e.content;
       _update();
-    } else if (e.content is MxText || e.content is MxImage) {
-      if (dir == MxDir.f) {
-        timeline.value.insert(0, e);
-      } else {
-        timeline.value.add(e);
-      }
-      timeline.notify();
     }
+  }
+
+  handleTimelineEvent(MxEvent e) {
+    const Set<String> visible = {'m.room.message'};
+    if (visible.contains(e.type)) timeline.value.add(e);
   }
 
   _updateDisplayName() {
     displayName.value = [_name?.name, _canonical?.alias, _another?.displayName]
-        .firstWhere((x) => x?.isNotEmpty == true, orElse: () => 'TODO:');
+        .firstWhere((x) => x?.isNotEmpty == true, orElse: () => '---noname---');
   }
 
   _updateAvatarUrl() {
@@ -103,7 +98,8 @@ class MatrixRoom {
     final slice = await matrix.client
         .getRoomMessages(roomId: roomId, dir: MxDir.b, from: start.value);
 
-    slice.chunk.forEach((e) => handleEvent(e, dir: MxDir.b));
+    slice.chunk.forEach(handleTimelineEvent);
+
     start.value = slice.end;
     if (slice.end == slice.start) sinceCreation.value = true;
 

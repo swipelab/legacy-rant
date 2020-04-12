@@ -67,6 +67,7 @@ class _RoomViewState extends State<RoomView> {
   void onScroll() async {
     if (widget.room.canLoadMore && _scroll.position.extentAfter < 50) {
       await widget.room.loadMore();
+      this.setState((){});
       WidgetsBinding.instance.addPostFrameCallback((_) => onScroll());
     }
   }
@@ -84,7 +85,8 @@ class _RoomViewState extends State<RoomView> {
     return room.timeline.bindValue((context, timeline) => ListView.builder(
           controller: _scroll,
           padding: EdgeInsets.only(top: 96),
-          itemBuilder: (context, index) => EventPresenter(room, timeline[index]),
+          itemBuilder: (context, index) =>
+              EventPresenter(room, timeline[index]),
           itemCount: timeline.length,
           reverse: true,
         ));
@@ -96,7 +98,8 @@ class _RoomViewState extends State<RoomView> {
         title:
             widget.room.displayName.bindValue((context, value) => Text(value)),
         actions: <Widget>[
-          widget.room.workers.bindValue((_, v) => Text(v.toString())),
+          widget.room.workers
+              .bindValue((_, v) => Center(child: Text(v > 0 ? 'loading...' : 'idle'))),
         ],
       ),
       child: Column(

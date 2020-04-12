@@ -17,7 +17,7 @@ class MessagePresenter extends StatelessWidget {
   final ContentPresenterBuilder _contentBuilder;
   MessagePresenter(this.event)
       : _contentBuilder = _presenters.putIfAbsent(
-            event.content.type, () => (_, e) => FallbackPresenter(e));
+            event.content?.type ?? event.type, () => (_, e) => FallbackPresenter(e));
 
   Widget build(BuildContext context) {
     return Container(
