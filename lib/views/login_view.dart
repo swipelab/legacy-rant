@@ -5,9 +5,9 @@ import 'package:scoped/scoped.dart';
 
 class LoginView extends StatelessWidget {
   final TextEditingController emailField =
-      TextEditingController(text: "agrapine");
+      TextEditingController(text: "");
   final TextEditingController passwordField =
-      TextEditingController(text: "TzH2O1985");
+      TextEditingController(text: "");
 
   Widget buildLogin(BuildContext context) {
     return Container(

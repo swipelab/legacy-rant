@@ -2,14 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class Page extends StatelessWidget {
+class Screen extends StatelessWidget {
   final Widget top;
   final Widget bottom;
 
   final Widget child;
   final EdgeInsets padding;
 
-  Page(
+  Screen(
       {this.top,
         this.bottom,
         this.child,

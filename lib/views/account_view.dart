@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rant/account.dart';
 import 'package:rant/ux/bubble_avatar.dart';
-import 'package:rant/ux/page.dart';
+import 'package:rant/ux/screen.dart';
 import 'package:scoped/scoped.dart';
 
 class AccountView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final account = context.get<Account>();
-    return Page(
+    return Screen(
         top: AppBar(title: Text('ACCOUNT')),
         child: ListView(children: [
           SizedBox(height: 96),

@@ -6,7 +6,7 @@ import 'package:rant/matrix/matrix_room.dart';
 import 'package:rant/matrix/types/mx_event.dart';
 import 'package:rant/room/message_presenter.dart';
 import 'package:rant/ux/message_composer.dart';
-import 'package:rant/ux/page.dart';
+import 'package:rant/ux/screen.dart';
 
 import 'package:scoped/scoped.dart';
 
@@ -91,7 +91,7 @@ class _RoomViewState extends State<RoomView> {
   }
 
   Widget build(BuildContext context) {
-    return Page(
+    return Screen(
       top: AppBar(
         title:
             widget.room.displayName.bindValue((context, value) => Text(value)),

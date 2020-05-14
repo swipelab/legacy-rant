@@ -78,7 +78,7 @@ class Call {
     callState.value = initialState;
     this.peerProfile.value = peerProfile;
 
-    callState.listen(_handleCallStateChanged);
+    callState.addListener(_handleCallStateChanged);
 
     Wakelock.enable();
     //TODO
@@ -271,6 +271,6 @@ class Call {
   void _dispose() async {
     //TODO:
     Wakelock.disable();
-    callState.forget(_handleCallStateChanged);
+    callState.removeListener(_handleCallStateChanged);
   }
 }

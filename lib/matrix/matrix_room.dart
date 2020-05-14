@@ -16,7 +16,7 @@ class MatrixRoom {
   final Ref<String> lastMessage = Ref('');
   final Ref<String> lastSeen = Ref('');
 
-  final Strip<MxEvent> timeline = Strip([]);
+  final Refs<MxEvent> timeline = Refs();
   final Ref<String> start;
   final Ref<String> end;
   final Ref<bool> sinceCreation = Ref(false);
