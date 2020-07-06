@@ -8,8 +8,9 @@ class FocusFixer extends StatelessWidget {
   //taping outside of a focusable scope should un-focus, to hide the keyboard
   void _fixFocus(BuildContext context) {
     FocusScopeNode currentFocus = FocusScope.of(context);
+
     if (!currentFocus.hasPrimaryFocus) {
-      currentFocus.unfocus();
+      currentFocus.requestFocus(FocusNode());
     }
   }
 

@@ -27,23 +27,23 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
-          const Locale('en', ''),
-          const Locale('ro', '')
-        ],
+        supportedLocales: [const Locale('en', ''), const Locale('ro', '')],
         title: 'RANTER',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: Colors.black,
-          primaryColorDark: Colors.black,
-          primaryColorLight: Colors.black,
+          primaryColor: Color(0xFFFFF9EB),
           accentColor: Color(0xFFFFF9EB),
           brightness: Brightness.light,
-          fontFamily: 'SF Pro Text',
-          appBarTheme: Theme.of(context).appBarTheme.copyWith(
-                elevation: 0,
-                color: Colors.black54,
-              ),
+          //fontFamily: 'SF Pro Text',
+//          appBarTheme: Theme.of(context).appBarTheme.copyWith(
+//                elevation: 0,
+//                color: Colors.white54,
+//                textTheme: TextTheme(
+//                  headline6: TextStyle(
+//                    color: Color(0xFF000000)
+//                  ),
+//                ),
+//              ),
           //scaffoldBackgroundColor: Color(0xFF191C26),
         ),
         home: context.get<Account>().isAuthenticated.bindValue(

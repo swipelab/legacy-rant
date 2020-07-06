@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Message {
@@ -31,14 +32,17 @@ class _MessageComposerState extends State<MessageComposer> {
   Widget build(BuildContext context) {
     return Container(
       height: 48,
-      decoration: BoxDecoration(),
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xFF777777), width: 2),
+        borderRadius: BorderRadius.circular(8)
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           IconButton(
             icon: Icon(Icons.add),
             iconSize: 24,
-            color: Theme.of(context).primaryColor,
             onPressed: () {},
           ),
           Expanded(
@@ -51,7 +55,7 @@ class _MessageComposerState extends State<MessageComposer> {
           IconButton(
             icon: Icon(Icons.send),
             iconSize: 24,
-            color: Theme.of(context).primaryColor,
+            //color: Theme.of(context).primaryColor,
             onPressed: send,
           )
         ],
