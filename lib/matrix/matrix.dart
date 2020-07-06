@@ -44,14 +44,15 @@ class Matrix {
   }
 
   Future<MxClientLoginResponse> login({String user, String password}) async {
-    final body = MxClientLoginResponse(
-      userId: '@agrapine:matrix.org',
-      accessToken:
-          'MDAxOGxvY2F0aW9uIG1hdHJpeC5vcmcKMDAxM2lkZW50aWZpZXIga2V5CjAwMTBjaWQgZ2VuID0gMQowMDI3Y2lkIHVzZXJfaWQgPSBAYWdyYXBpbmU6bWF0cml4Lm9yZwowMDE2Y2lkIHR5cGUgPSBhY2Nlc3MKMDAyMWNpZCBub25jZSA9IG1PQU44dyxsMn44Uz02cmMKMDAyZnNpZ25hdHVyZSAmocz0mwdVfjbOjhlzds53-HzUCxe7nuBjmEjFnzXSCwo',
-    );
+//    final body = MxClientLoginResponse(
+//      userId: '@agrapine:matrix.org',
+//      accessToken:
+//          'MDAxOGxvY2F0aW9uIG1hdHJpeC5vcmcKMDAxM2lkZW50aWZpZXIga2V5CjAwMTBjaWQgZ2VuID0gMQowMDI3Y2lkIHVzZXJfaWQgPSBAYWdyYXBpbmU6bWF0cml4Lm9yZwowMDE2Y2lkIHR5cGUgPSBhY2Nlc3MKMDAyMWNpZCBub25jZSA9IG1PQU44dyxsMn44Uz02cmMKMDAyZnNpZ25hdHVyZSAmocz0mwdVfjbOjhlzds53-HzUCxe7nuBjmEjFnzXSCwo',
+//    );
 
-//    final resp = await _client.login(body: {"type": "m.login.password", "user": user, "password": password});
-//    final body = MxClientLoginResponse.fromJson(resp.body);
+    final resp = await _client.postLogin(
+        body: {"type": "m.login.password", "user": user, "password": password});
+    final body = MxClientLoginResponse.fromJson(resp.body);
     _accessToken = body.accessToken;
     _self = body.userId;
     return body;
@@ -83,8 +84,10 @@ class Matrix {
     }
   }
 
-  Future<MxClientGetSyncResponse> sync({String since, int timeout = 30000, String filter = '0'}) async {
-    final resp = await client.getSync(since: since, timeout: timeout, filter: filter);
+  Future<MxClientGetSyncResponse> sync(
+      {String since, int timeout = 30000, String filter = '0'}) async {
+    final resp =
+        await client.getSync(since: since, timeout: timeout, filter: filter);
     return MxClientGetSyncResponse.fromJson(resp.body);
   }
 

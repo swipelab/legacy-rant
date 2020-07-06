@@ -5,14 +5,14 @@ import 'package:scoped/scoped.dart';
 
 class LoginView extends StatelessWidget {
   final TextEditingController emailField =
-      TextEditingController(text: "");
+      TextEditingController(text: "agrapine");
   final TextEditingController passwordField =
-      TextEditingController(text: "");
+      TextEditingController(text: "cucubau");
 
   Widget buildLogin(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,// Color(0xFF191C26),
+          color: Colors.white, // Color(0xFF191C26),
           boxShadow: [
             BoxShadow(blurRadius: 6, spreadRadius: 6, color: Colors.black12)
           ],
@@ -25,7 +25,11 @@ class LoginView extends StatelessWidget {
               offset: Offset(0, -28),
               child: Text('RANTER',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22))),
-          EmailField(controller: emailField),
+          TextFormField(
+            controller: emailField,
+            decoration: InputDecoration(
+                labelText: 'username', suffixIcon: Icon(Icons.email)),
+          ),
           PasswordField(controller: passwordField),
           SizedBox(height: 64),
           FlatButton(
