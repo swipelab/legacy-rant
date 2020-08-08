@@ -7,7 +7,6 @@ import 'package:rant/matrix/types/mx_event.dart';
 import 'package:rant/room/message_presenter.dart';
 import 'package:rant/ux/backdrop.dart';
 import 'package:rant/ux/message_composer.dart';
-import 'package:rant/ux/screen.dart';
 
 import 'package:scoped/scoped.dart';
 
@@ -89,7 +88,7 @@ class _RoomViewState extends State<RoomView> {
   Widget buildTimeline(BuildContext context, MatrixRoom room) {
     return room.timeline.bind((context, timeline) => ListView.builder(
           controller: _scroll,
-          padding: EdgeInsets.only(top: 96),
+          padding: EdgeInsets.only(top: 96, bottom: 64),
           itemBuilder: (context, index) =>
               EventPresenter(room, timeline[index]),
           itemCount: timeline.length,
