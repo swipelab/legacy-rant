@@ -1,16 +1,27 @@
 library matrix;
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
 import 'package:chopper/chopper.dart';
+import 'package:rant/matrix/exception.dart';
+import 'package:rant/matrix/requests/mx_client_register_email_request_token_request.dart';
+import 'package:rant/matrix/requests/mx_client_register_session.dart';
 import 'package:rant/matrix/types/mx_get_room_messages.dart';
 import 'package:rant/matrix/types/mx_text.dart';
+import 'package:rant/matrix/types/mx_user_kind.dart';
 import 'package:rant/models/models.dart';
 import 'package:rant/util/util.dart';
 import 'package:scoped/scoped.dart';
 
 import 'client.dart';
-import 'responses/mx_client_get_sync_response.dart';
-import 'responses/mx_client_login_response.dart';
-import 'responses/mx_client_put_room_event_response.dart';
+import 'requests/mx_client_get_sync_response.dart';
+import 'requests/mx_client_login_response.dart';
+import 'requests/mx_client_put_room_event_response.dart';
+import 'requests/mx_client_register_request.dart';
+import 'requests/mx_client_register_response.dart';
 
 class Matrix {
   final Store store;
@@ -31,7 +42,8 @@ class Matrix {
         services: [
           Client.create(),
         ],
-        interceptors: [_accessTokenInterceptor],
+        interceptors: [_accessTokenInterceptor, _exceptionInterceptor],
+        errorConverter: JsonConverter(),
         converter: JsonConverter()));
   }
 
@@ -40,16 +52,17 @@ class Matrix {
     final headers = Map<String, String>.from(request.headers)
       ..['Authorization'] = 'Bearer $_accessToken'
       ..['Content-Type'] = 'application/json';
-    return request.replace(headers: headers);
+    return request.copyWith(headers: headers);
+  }
+
+  FutureOr<Response> _exceptionInterceptor(Response response) async {
+    if (!response.isSuccessful) {
+      throw MxException.fromResponse(response);
+    }
+    return response;
   }
 
   Future<MxClientLoginResponse> login({String user, String password}) async {
-//    final body = MxClientLoginResponse(
-//      userId: '@agrapine:matrix.org',
-//      accessToken:
-//          'MDAxOGxvY2F0aW9uIG1hdHJpeC5vcmcKMDAxM2lkZW50aWZpZXIga2V5CjAwMTBjaWQgZ2VuID0gMQowMDI3Y2lkIHVzZXJfaWQgPSBAYWdyYXBpbmU6bWF0cml4Lm9yZwowMDE2Y2lkIHR5cGUgPSBhY2Nlc3MKMDAyMWNpZCBub25jZSA9IG1PQU44dyxsMn44Uz02cmMKMDAyZnNpZ25hdHVyZSAmocz0mwdVfjbOjhlzds53-HzUCxe7nuBjmEjFnzXSCwo',
-//    );
-
     final resp = await _client.postLogin(
         body: {"type": "m.login.password", "user": user, "password": password});
     final body = MxClientLoginResponse.fromJson(resp.body);
@@ -58,8 +71,7 @@ class Matrix {
     return body;
   }
 
-  Future<MxClientPutRoomEventResponse> putRoomMessage(
-      {String roomId, String body}) async {
+  Future<MxClientPutRoomEventResponse> putRoomMessage({String roomId, String body}) async {
     final content = MxText(body: body);
     return await putRoomEvent(
         roomId: roomId,
@@ -84,10 +96,9 @@ class Matrix {
     }
   }
 
-  Future<MxClientGetSyncResponse> sync(
-      {String since, int timeout = 30000, String filter = '0'}) async {
+  Future<MxClientGetSyncResponse> sync({String since, int timeout = 30000, String filter = '0'}) async {
     final resp =
-        await client.getSync(since: since, timeout: timeout, filter: filter);
+    await client.getSync(since: since, timeout: timeout, filter: filter);
     return MxClientGetSyncResponse.fromJson(resp.body);
   }
 
@@ -135,7 +146,7 @@ class Matrix {
       var authority = uri.authority;
       var matrixPath = "_matrix/media/v1";
       var path =
-          uri.pathSegments?.firstWhere((element) => true, orElse: () => "");
+      uri.pathSegments?.firstWhere((element) => true, orElse: () => "");
 
       if (width == null || height == null) {
         return "https://$host/$matrixPath/download/$authority/$path";
@@ -145,5 +156,32 @@ class Matrix {
     }
 
     return uri?.toString();
+  }
+
+  Future<MxClientRegisterResponse> register({String username, String password, String email}) async {
+    MxClientRegisterSession session;
+
+    email = email ?? "scors.agra@gmail.com";
+
+    try {
+      await _client.register(
+          kind: mxUserKindString(MxUserKind.user),
+          body: MxClientRegisterRequest(username: username, password: password)
+              .toJson());
+      throw Exception("POST /register should throw 401 Unauthorized");
+    } on MxHttpException catch (e) {
+      session = MxClientRegisterSession.fromJson(e.body);
+    }
+
+    final token = await _client.registerEmailRequestToken(
+        body: MxClientRegisterEmailRequestTokenRequest(email: email, sendAttempt: 1, clientSecret: cryptoString()));
+
+    print(token);
+  }
+
+  static String cryptoString([int length = 32]) {
+    final random = Random.secure();
+    final values = List<int>.generate(length, (index) => random.nextInt(256));
+    return base64Url.encode(values);
   }
 }

@@ -28,8 +28,7 @@ class LoginView extends StatelessWidget {
           TextFormField(
             controller: userField,
             decoration: InputDecoration(
-                labelText: 'username',
-                suffixIcon: Icon(Icons.email)),
+                labelText: 'username', suffixIcon: Icon(Icons.email)),
           ),
           PasswordField(controller: passwordField),
           SizedBox(height: 64),
@@ -47,6 +46,10 @@ class LoginView extends StatelessWidget {
                 .login(userField.text, passwordField.text),
           ),
           SizedBox(height: 64),
+          FlatButton(
+            child: Text("REGISTER"),
+            onPressed: () => Navigator.of(context).pushNamed("/register"),
+          )
         ],
       ),
     );

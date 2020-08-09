@@ -12,6 +12,9 @@ class Json {
 }
 
 extension JsonExtension on Map<String, dynamic> {
+  void denull() =>
+      this..removeWhere((key, value) => value == null);
+
   dynamic path<T>(String path, {dynamic defaultValue}) {
     try {
       dynamic current = this;
