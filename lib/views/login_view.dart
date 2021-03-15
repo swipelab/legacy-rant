@@ -4,7 +4,7 @@ import 'package:rant/ux/ux.dart';
 import 'package:scoped/scoped.dart';
 
 class LoginView extends StatelessWidget {
-  final TextEditingController emailField =
+  final TextEditingController userField =
       TextEditingController(text: "agrapine");
   final TextEditingController passwordField =
       TextEditingController(text: "cucubau");
@@ -26,7 +26,7 @@ class LoginView extends StatelessWidget {
               child: Text('RANTER',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22))),
           TextFormField(
-            controller: emailField,
+            controller: userField,
             decoration: InputDecoration(
                 labelText: 'username', suffixIcon: Icon(Icons.email)),
           ),
@@ -43,9 +43,13 @@ class LoginView extends StatelessWidget {
             ),
             onPressed: () => context
                 .get<Account>()
-                .login(emailField.text, passwordField.text),
+                .login(userField.text, passwordField.text),
           ),
           SizedBox(height: 64),
+          FlatButton(
+            child: Text("REGISTER"),
+            onPressed: () => Navigator.of(context).pushNamed("/register"),
+          )
         ],
       ),
     );

@@ -6,3 +6,5 @@ extension StringExtension on String {
     return this.substring(0, min(length - dots.length, this.length)) + dots;
   }
 }
+
+

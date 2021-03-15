@@ -1,7 +1,12 @@
 import "dart:async";
 import 'package:chopper/chopper.dart';
+import 'package:rant/matrix/requests/mx_client_register_email_request_token_request.dart';
+import 'package:rant/matrix/requests/mx_client_register_email_request_token_response.dart';
+import 'package:rant/matrix/requests/mx_client_register_request.dart';
 import 'package:rant/matrix/types/mx_event.dart';
+import 'package:rant/matrix/types/mx_user_kind.dart';
 
+import 'requests/mx_client_register_response.dart';
 import 'types/mx_dir.dart';
 import 'types/mx_get_room_messages.dart';
 
@@ -74,7 +79,8 @@ abstract class Client extends ChopperService {
   });
 
   Future<List<MxEvent>> getRoomState({String roomId}) =>
-      _getRoomState(roomId: roomId).then((resp) => resp.body.map(MxEvent.fromJson).toList());
+      _getRoomState(roomId: roomId)
+          .then((resp) => resp.body.map(MxEvent.fromJson).toList());
 
   @Get(path: 'rooms/{roomId}/members')
   Future<Response> getRoomMembers({
@@ -227,21 +233,24 @@ abstract class Client extends ChopperService {
   });
 
   @Put(path: 'presence/{userId}/status')
-  Future<Response> putPresenceStatus({@Path() String userId, @Body() dynamic body});
+  Future<Response> putPresenceStatus(
+      {@Path() String userId, @Body() dynamic body});
 
   @Get(path: 'presence/{userId}/status')
   Future<Response> getPresenceStatus({@Path() String userId});
 
-  Future<List<MxDevice>> getDevices() async {
-    final resp = await _getDevices();
-    final result = (resp.body['devices'] as List).cast<Map<String, dynamic>>().map(MxDevice.fromJson).toList();
-    return result;
-  }
+  Future<List<MxDevice>> getDevices() async =>
+      await _getDevices().then((value) => (value.body["devices"] as List)
+          .cast<Map<String, dynamic>>()
+          .map(MxDevice.fromJson)
+          .toList());
 
   @Get(path: 'devices')
   Future<Response<Map<String, dynamic>>> _getDevices();
 
-  Future<MxDevice> getDevice({String deviceId}) async => MxDevice.fromJson((await _getDevice(deviceId: deviceId)).body);
+  Future<MxDevice> getDevice({String deviceId}) async =>
+      await _getDevice(deviceId: deviceId)
+          .then((value) => MxDevice.fromJson(value.body));
 
   @Get(path: 'devices/{deviceId}')
   Future<Response<Map<String, dynamic>>> _getDevice({@Path() String deviceId});
@@ -249,7 +258,8 @@ abstract class Client extends ChopperService {
   @Put(path: 'devices/{deviceId}')
   Future<Response> _putDevice({@Path() String deviceId, @Body() dynamic body});
 
-  Future putDevice({String deviceId, String displayName}) async => await _putDevice(
+  Future putDevice({String deviceId, String displayName}) async =>
+      await _putDevice(
         deviceId: deviceId,
         body: {
           "display_name": displayName,
@@ -259,9 +269,16 @@ abstract class Client extends ChopperService {
   @Delete(path: 'devices/{deviceId}')
   Future deleteDevice({@Path() String deviceId, @Body() dynamic body});
 
-  Future deleteDevices({List<String> devices, MxAuthenticationData auth}) async =>
+  Future deleteDevices(
+          {List<String> devices, MxAuthenticationData auth}) async =>
       _deleteDevices(body: {devices: devices, auth: auth?.toJson()});
 
   @Post(path: 'delete_devices')
   Future<Response> _deleteDevices({@Body() dynamic body});
+
+  @Post(path: "register")
+  Future<Response> register({@Query() String kind, @Body() dynamic body});
+
+  @Post(path: "register/email/requestToken")
+  Future<Response> registerEmailRequestToken({@Body() dynamic body});
 }

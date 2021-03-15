@@ -65,7 +65,10 @@ class MatrixRoom {
 
   handleHistoricEvent(MxEvent e) {
     const Set<String> visible = {'m.room.message'};
-    if (visible.contains(e.type)) timeline.add(e);
+    if (visible.contains(e.type) &&
+        !(timeline.any((element) => element.eventId == e.eventId))) {
+      timeline.add(e);
+    }
   }
 
   _updateDisplayName() {

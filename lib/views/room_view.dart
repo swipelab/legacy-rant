@@ -7,6 +7,7 @@ import 'package:rant/matrix/types/mx_event.dart';
 import 'package:rant/room/message_presenter.dart';
 import 'package:rant/ux/backdrop.dart';
 import 'package:rant/ux/message_composer.dart';
+import 'package:rant/ux/picture_frame.dart';
 import 'package:rant/ux/screen.dart';
 
 import 'package:scoped/scoped.dart';
@@ -28,32 +29,17 @@ class EventPresenter extends StatelessWidget {
   EventPresenter(this.room, this.event) : sender = event.sender;
 
   Widget build(BuildContext context) {
-    final mxc = room.members[sender]?.avatarUrl;
+    final mxc = Matrix.mxcToUrl(room.members[sender]?.avatarUrl);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Color(0xFFBBBBBB),
-          ),
-          foregroundDecoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Color(0xFF777777), width: 1.5),
-          ),
-          child: mxc == null
-              ? null
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    Matrix.mxcToUrl(room.members[sender]?.avatarUrl),
-                    width: 32,
-                    height: 32,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+        Padding(
+          padding: EdgeInsets.only(left: 8.0, top: 2, bottom: 2, right: 4),
+          child: PictureFrame.circular(
+              child: Picture(mxc),
+              size: 36,
+              radius: 8),
         ),
         Expanded(child: MessagePresenter(event))
       ],
@@ -88,8 +74,8 @@ class _RoomViewState extends State<RoomView> {
 
   Widget buildTimeline(BuildContext context, MatrixRoom room) {
     return room.timeline.bind((context, timeline) => ListView.builder(
+          padding: EdgeInsets.only(top: 8, bottom: 8),
           controller: _scroll,
-          padding: EdgeInsets.only(top: 96),
           itemBuilder: (context, index) =>
               EventPresenter(room, timeline[index]),
           itemCount: timeline.length,
@@ -99,53 +85,36 @@ class _RoomViewState extends State<RoomView> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      appBar: AppBar(
+          title: widget.room.displayName
+              .bindValue((context, value) => Text(value)),
+          actions: <Widget>[
+            widget.room.workers.bindValue(
+                (_, v) => Center(child: Text(v > 0 ? 'loading...' : 'idle'))),
+            context
+                .get<Account>()
+                .workers
+                .bindValue((_, v) => Center(child: Text('(${v.toString()})'))),
+          ]),
+      body: Column(
         children: [
-          Positioned.fill(child: buildTimeline(context, widget.room)),
-          Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Backdrop(
-                  child: AppBar(
-                      backgroundColor: Colors.white12,
-                      title: widget.room.displayName
-                          .bindValue((context, value) => Text(value)),
-                      actions: <Widget>[
-                    widget.room.workers.bindValue((_, v) =>
-                        Center(child: Text(v > 0 ? 'loading...' : 'idle'))),
-                    context.get<Account>().workers.bindValue(
-                        (_, v) => Center(child: Text('(${v.toString()})'))),
-                  ]))),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Backdrop(
-              child: Container(
-                color: Color(0xAAFFFFFF),
-                child: MessageComposer(
-                    onMessage: (message) =>
-                        widget.room.sendMessage(body: message.body)),
-              ),
-            ),
+          Expanded(
+            child: buildTimeline(context, widget.room),
           ),
+          Container(
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                  color: Color(0x33000000),
+                  offset: Offset.zero,
+                  spreadRadius: 0,
+                  blurRadius: 6)
+            ]),
+            child: MessageComposer(
+                onMessage: (message) =>
+                    widget.room.sendMessage(body: message.body)),
+          )
         ],
       ),
     );
-
-//    child: Column(
-//    children: <Widget>[
-//    Expanded(
-//    child: Padding(
-//    padding: const EdgeInsets.only(bottom: 48),
-//    child: buildTimeline(context, widget.room),
-//    ),
-//    ),
-//    ],
-//    ),
-//    child: MessageComposer(
-//    onMessage: (message) => widget.room.sendMessage(body: message.body)),
-//    );
   }
 }

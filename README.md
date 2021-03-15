@@ -8,5 +8,5 @@ Currently used for:
 - Matrix Api Client (Chopper)
 
 ```sh
-flutter packages pub run build_runner build
+flutter packages pub run build_runner build --delete-conflicting-outputs
 ```
